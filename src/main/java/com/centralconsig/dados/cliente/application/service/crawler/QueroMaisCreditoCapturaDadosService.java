@@ -83,7 +83,7 @@ public class QueroMaisCreditoCapturaDadosService {
         }
     }
 
-    @Scheduled(cron = "0 20,30,40,50 7-23 * * *", zone = "America/Sao_Paulo")
+    @Scheduled(cron = "0 20,30,40 7-23 * * *", zone = "America/Sao_Paulo")
 //    @Scheduled(fixedDelay = 1000)
     public void buscaMargensNaoCasa() {
         if (!isRunningNaoCasa.compareAndSet(false, true)) {
