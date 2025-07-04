@@ -69,8 +69,11 @@ public class QueroMaisCreditoCapturaDadosService {
 
         try {
             List<Cliente> clientes = clienteService.getClientesCasaComVinculosEHistorico().stream()
-                    .sorted(Comparator.comparing(this::getDataUltimaConsulta, Comparator.nullsFirst(Comparator.naturalOrder())))
-                    .toList();
+                .sorted(Comparator
+                        .comparing((Cliente c) -> c.getGoogleSheet() != null && c.getGoogleSheet().isPreferencial() ? 0 : 1)
+                        .thenComparing(this::getDataUltimaConsulta, Comparator.nullsFirst(Comparator.naturalOrder()))
+                )
+                .toList();
             if (clientes.isEmpty())
                 return;
             log.info("Busca Margens Casa iniciado");
@@ -93,9 +96,12 @@ public class QueroMaisCreditoCapturaDadosService {
         log.info("Busca Margens Não Casa iniciado");
         try {
             List<Cliente> clientes = clienteService.getClientesNaoCasaComVinculosEHistorico().stream()
-                    .sorted(Comparator.comparing(this::getDataUltimaConsulta, Comparator.nullsFirst(Comparator.naturalOrder())))
-                    .limit(LIMITE_CONSULTA_DIARIA)
-                    .toList();
+                .sorted(Comparator
+                        .comparing((Cliente c) -> c.getGoogleSheet() != null && c.getGoogleSheet().isPreferencial() ? 0 : 1)
+                        .thenComparing(this::getDataUltimaConsulta, Comparator.nullsFirst(Comparator.naturalOrder()))
+                )
+                .limit(LIMITE_CONSULTA_DIARIA)
+                .toList();
             capturaDadosClienteEmParalelo(clientes, "nao");
         } finally {
             log.info("Busca Margens Não Casa Finalizado");
