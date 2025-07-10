@@ -135,18 +135,19 @@ public class QueroMaisCreditoCapturaDadosService {
                         .noneMatch(historico -> historico.getDataConsulta().equals(LocalDate.now())))
                 .toList();
 
-        RateLimiter rateLimiter = RateLimiter.create(4.0);
+        RateLimiter rateLimiter = RateLimiter.create(8.0);
 
         ExecutorService executor = Executors.newFixedThreadPool(usuarios.size());
         long inicio = System.currentTimeMillis();
 
         try {
+            int tamanhoLote = clientes.size() > 5000 ? 500 : 120;
             List<List<Cliente>> subListas = new ArrayList<>();
-            for (int i = 0; i < clientes.size(); i += 120) {
-                subListas.add(clientes.subList(i, Math.min(i + 120, clientes.size())));
+            for (int i = 0; i < clientes.size(); i += tamanhoLote) {
+                subListas.add(clientes.subList(i, Math.min(i + tamanhoLote, clientes.size())));
             }
 
-            LocalDateTime tempoFinal = LocalDateTime.now().plusMinutes(9);
+            LocalDateTime tempoFinal = LocalDateTime.now().plusMinutes(9).plusSeconds(40);
 
             for (int i = 0; i < subListas.size(); i++) {
                 final List<Cliente> subLista = subListas.get(i);
@@ -160,7 +161,7 @@ public class QueroMaisCreditoCapturaDadosService {
             }
 
             executor.shutdown();
-            if (!executor.awaitTermination(9, TimeUnit.MINUTES)) {
+            if (!executor.awaitTermination(580, TimeUnit.SECONDS)) {
                 log.warn("Timeout atingido, forçando encerramento das tarefas.");
                 executor.shutdownNow();
             }

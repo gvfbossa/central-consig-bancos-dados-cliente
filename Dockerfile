@@ -7,14 +7,14 @@ WORKDIR /app
 COPY . .
 
 # Copia o JAR da lib core (gerado localmente)
-COPY libs/central-consig-bancos-core-1.0.1.jar /root/libs/
+COPY libs/central-consig-bancos-core-1.0.5.jar /root/libs/
 
 # Instala a lib no repositório local do Maven no container
 RUN mvn install:install-file \
-  -Dfile=/root/libs/central-consig-bancos-core-1.0.1.jar \
+  -Dfile=/root/libs/central-consig-bancos-core-1.0.5.jar \
   -DgroupId=com.centralconsig.core \
   -DartifactId=central-consig-bancos-core \
-  -Dversion=1.0.1 \
+  -Dversion=1.0.5 \
   -Dpackaging=jar
 
 # Compila o microsserviço
