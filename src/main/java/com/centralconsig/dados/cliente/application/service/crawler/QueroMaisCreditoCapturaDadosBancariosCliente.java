@@ -99,7 +99,7 @@ public class QueroMaisCreditoCapturaDadosBancariosCliente {
                 subListas.add(clientes.subList(i, Math.min(i + 120, clientes.size())));
             }
 
-            LocalDateTime tempoFinal = LocalDateTime.now().plusMinutes(9);
+            LocalDateTime tempoFinal = LocalDateTime.now().plusMinutes(9).plusSeconds(20);
 
             for (int i = 0; i < subListas.size(); i++) {
                 final List<Cliente> subLista = subListas.get(i);
@@ -118,7 +118,7 @@ public class QueroMaisCreditoCapturaDadosBancariosCliente {
             }
 
             executor.shutdown();
-            if (!executor.awaitTermination(9, TimeUnit.MINUTES)) {
+            if (!executor.awaitTermination(560, TimeUnit.SECONDS)) {
                 log.warn("Timeout atingido, forçando encerramento das tarefas.");
                 executor.shutdownNow();
             }
