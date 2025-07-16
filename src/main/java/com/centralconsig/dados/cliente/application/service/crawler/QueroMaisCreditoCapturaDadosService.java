@@ -59,8 +59,8 @@ public class QueroMaisCreditoCapturaDadosService {
         this.usuarioLoginQueroMaisCreditoService = usuarioLoginQueroMaisCreditoService;
     }
 
-//    @Scheduled(cron = "0 0,10 7-23 * * *", zone = "America/Sao_Paulo")
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(cron = "0 0,10 7-23 * * *", zone = "America/Sao_Paulo")
+//    @Scheduled(fixedDelay = 1000)
     public void buscaMargensCasa() {
         if (!isRunningCasa.compareAndSet(false, true)) {
             log.info("Buscar Margens Casa já em execução. Ignorando nova tentativa.");
@@ -79,9 +79,8 @@ public class QueroMaisCreditoCapturaDadosService {
             log.info("Busca Margens Casa iniciado");
             capturaDadosClienteEmParalelo(clientes, "casa");
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
+            log.error("Houve um erro CRÍTICO ao buscar as Margens Casa. Erro: " + e.getMessage());
+        } finally {
             log.info("Busca Margens Casa finalizado");
             isRunningCasa.set(false);
             LIMITE_TENTATIVAS = 0;
@@ -106,6 +105,8 @@ public class QueroMaisCreditoCapturaDadosService {
                 .limit(LIMITE_CONSULTA_DIARIA)
                 .toList();
             capturaDadosClienteEmParalelo(clientes, "nao");
+        }  catch (Exception e) {
+            log.error("Houve um erro CRÍTICO ao buscar as Margens Não Casa. Erro: " + e.getMessage());
         } finally {
             log.info("Busca Margens Não Casa Finalizado");
             isRunningNaoCasa.set(false);
