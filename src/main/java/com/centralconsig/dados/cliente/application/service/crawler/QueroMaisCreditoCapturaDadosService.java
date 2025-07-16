@@ -59,8 +59,8 @@ public class QueroMaisCreditoCapturaDadosService {
         this.usuarioLoginQueroMaisCreditoService = usuarioLoginQueroMaisCreditoService;
     }
 
-    @Scheduled(cron = "0 0,10 7-23 * * *", zone = "America/Sao_Paulo")
-//    @Scheduled(fixedDelay = 1000)
+//    @Scheduled(cron = "0 0,10 7-23 * * *", zone = "America/Sao_Paulo")
+    @Scheduled(fixedDelay = 1000)
     public void buscaMargensCasa() {
         if (!isRunningCasa.compareAndSet(false, true)) {
             log.info("Buscar Margens Casa já em execução. Ignorando nova tentativa.");
@@ -78,7 +78,10 @@ public class QueroMaisCreditoCapturaDadosService {
                 return;
             log.info("Busca Margens Casa iniciado");
             capturaDadosClienteEmParalelo(clientes, "casa");
-        } finally {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
             log.info("Busca Margens Casa finalizado");
             isRunningCasa.set(false);
             LIMITE_TENTATIVAS = 0;
